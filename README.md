@@ -34,8 +34,6 @@ noctalia msg plugins enable ykoh/amaranth-calendar
 
 **ID/PW(기본)**: 비밀번호를 OS 키링(gnome-keyring, KDE Wallet)에 한 번 등록합니다.
 
-> ⚠️ ID/PW 방식은 아직 실서버에서 끝까지 검증되지 않았습니다. 실서버 검증은 브라우저 쿠키 방식으로 마쳤습니다.
-
 ```sh
 secret-tool store --label='Amaranth (gw.example.com)' service amaranth-sync server gw.example.com account <로그인ID>
 ```
@@ -87,5 +85,3 @@ AMARANTH_TEST_SERVER=gw.example.com python3 -m unittest discover -s tests -k liv
 noctalia plugins lint amaranth-calendar                                       # 플러그인 정적 검사
 python3 amaranth-calendar/amaranth_sync.py --server gw.example.com --vdir /tmp/v --auth browser --browser chrome   # 직접 실행
 ```
-
-API 서명과 쿠키 복호화는 [inno-creed](https://github.com/zilhak/inno-creed)를 참고했습니다.
