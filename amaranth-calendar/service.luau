@@ -2,6 +2,7 @@
 -- 종료 코드 0=성공, 1=다음 주기에 재시도, 2=사람이 설정·비밀번호를 고쳐야 함(자동 동기화 중단).
 
 local running, failing, blocked = false, false, false
+local pending, pendingManual = false, false
 local warned = {}
 
 local function cfg(key, default)
@@ -73,18 +74,29 @@ local function argv()
   return a
 end
 
+local function handleResult(r)
+  local last = (r.stdout or ""):match("([^\n]*)\n*$") or ""
+  local ok, res = pcall(noctalia.json.decode, last)
+  local msg = (ok and type(res) == "table" and res.error) or (r.timedOut and "시간 초과") or (r.stderr or "")
+  if r.exitCode == 0 then failing, blocked = false, false; return end
+  if r.exitCode == 2 then blocked = true end
+  if not failing or blocked then noctalia.notifyError(noctalia.tr("notify.failed"), msg) end
+  failing = true
+end
+
 local function sync(manual)
-  if running or (blocked and not manual) or not checkSetup() then return end
+  -- 실행 중에 들어온 요청(설정 변경 등)은 버리지 않고, 끝나는 즉시 최신 설정으로 한 번 더 실행한다.
+  if running then pending, pendingManual = true, pendingManual or manual; return end
+  if (blocked and not manual) or not checkSetup() then return end
   running = true
   local started = noctalia.runAsync(argv(), function(r)
     running = false
-    local last = (r.stdout or ""):match("([^\n]*)\n*$") or ""
-    local ok, res = pcall(noctalia.json.decode, last)
-    local msg = (ok and type(res) == "table" and res.error) or (r.timedOut and "시간 초과") or (r.stderr or "")
-    if r.exitCode == 0 then failing, blocked = false, false; return end
-    if r.exitCode == 2 then blocked = true end
-    if not failing or blocked then noctalia.notifyError(noctalia.tr("notify.failed"), msg) end
-    failing = true
+    handleResult(r)
+    if pending then
+      local again = pendingManual
+      pending, pendingManual = false, false
+      sync(again)
+    end
   end, 120000)
   if not started then
     running = false
