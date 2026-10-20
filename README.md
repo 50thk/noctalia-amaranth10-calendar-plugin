@@ -69,6 +69,7 @@ path = "~/.local/share/calendars/amaranth"
 - 자동 동기화: 설정한 주기마다 실행되고, 설정을 바꾸면 곧바로 다시 동기화합니다.
 - 수동 동기화: `noctalia msg plugin ykoh/amaranth-calendar:sync all sync`
 - 일정 알림: noctalia `[calendar.reminders]`가 처리합니다(기본 시작 10분 전, 종일 일정은 매일 09:00 요약).
+- 업데이트: `noctalia msg plugins update amaranth` 뒤에는 실행 중인 서비스가 이전 코드를 계속 쓰므로, `noctalia msg plugins disable ykoh/amaranth-calendar` → `enable`로 다시 켜야 새 코드가 적용됩니다.
 
 | 종료 코드 | 의미 | 플러그인 동작 |
 |---|---|---|
