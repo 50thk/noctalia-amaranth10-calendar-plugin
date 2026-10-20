@@ -1,0 +1,4 @@
+.playwright-mcp/
+__pycache__/
+.superpowers/
+docs/superpowers/
