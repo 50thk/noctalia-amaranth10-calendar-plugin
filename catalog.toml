@@ -1,0 +1,12 @@
+[[plugin]]
+id           = "ykoh/amaranth-calendar"
+name         = "Amaranth Calendar"
+version      = "0.2.0"
+author       = "ykoh"
+license      = "MIT"
+icon         = "calendar"
+description  = "아마란스 그룹웨어 일정을 noctalia 캘린더에 동기화"
+deprecated   = false
+plugin_api   = 26
+tags         = ["Calendar", "Groupware"]
+dependencies = ["python3", "libsecret"]
